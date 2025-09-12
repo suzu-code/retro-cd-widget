@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>CD Widget</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="widget">
+    <div class="close-btn" id="closeBtn">×</div>
+
+    <div class="cd-player-bg">
+      <div class="cd" id="cd"></div>
+    </div>
+
+    <div class="controls">
+      <button class="button" id="prev">◀</button>
+      <button class="button" id="playPause">▶</button>
+      <button class="button" id="next">▶</button>
+    </div>
+  </div>
+
+  <audio id="audio" src="audio/song1.mp3"></audio>
+
+  <script>
+    const cd = document.getElementById('cd');
+    const audio = document.getElementById('audio');
+    const playPauseBtn = document.getElementById('playPause');
+    const nextBtn = document.getElementById('next');
+    const prevBtn = document.getElementById('prev');
+    const songName = document.getElementById('songName');
+    const closeBtn = document.getElementById('closeBtn');
+
+    closeBtn.onclick = () => {
+      window.electronAPI.closeWindow();
+    };
+
+    const songs = [
+      { src: "audio/song1.mp3", name: "曲名1" },
+      { src: "audio/song2.mp3", name: "曲名2" }
+    ];
+
+    let current = 0;
+    let playing = false;
+
+    function updateSong() {
+      audio.src = songs[current].src;
+      songName.textContent = songs[current].name;
+    }
+
+    function startSpin() {
+      cd.style.animation = "spin 4s linear infinite";
+    }
+
+    function stopSpin() {
+      cd.style.animation = "";
+    }
+
+    playPauseBtn.onclick = () => {
+      if (!playing) {
+        audio.play();
+        startSpin();
+        playPauseBtn.textContent = "⏸";
+        playing = true;
+      } else {
+        audio.pause();
+        stopSpin();
+        playPauseBtn.textContent = "▶";
+        playing = false;
+      }
+    };
+
+    nextBtn.onclick = () => {
+      current = (current + 1) % songs.length;
+      updateSong();
+      if (playing) {
+        audio.play();
+        startSpin();
+      }
+    };
+
+    prevBtn.onclick = () => {
+      current = (current - 1 + songs.length) % songs.length;
+      updateSong();
+      if (playing) {
+        audio.play();
+        startSpin();
+      }
+    };
+
+    audio.onended = () => {
+      nextBtn.onclick();
+    };
+
+    updateSong();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
